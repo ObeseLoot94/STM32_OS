@@ -11,10 +11,7 @@ TCB tcb[MAX_THREADS] = {0};
 
 void halt_us(uint32_t time)
 {
-	for (uint32_t i = 0; i < time; ++i) {
-		NOP_US;
-	}
-
+	for (uint32_t i = 0; i < time; ++i) NOP_US;
 }
 
 void halt_ms(uint32_t time)
