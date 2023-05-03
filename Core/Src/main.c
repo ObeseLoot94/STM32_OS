@@ -48,6 +48,7 @@
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -56,12 +57,14 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
-static void MX_TIM2_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_TIM2_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart);
 void lcd_string(void);
+
 
 
 
@@ -103,15 +106,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
-  MX_TIM2_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   lcd_init();
   __disable_irq();
-  Create_Thread(&Blink1);
-  Create_Thread(&Blink2);
-  Create_Thread(&lcd_string);
+  uint32_t Blink1_stack[MIN_STACK_SIZE + 10];
+  CreateThread(&Blink1, sizeof(Blink1_stack/Blink1_stack[0]), Blink1_stack);
+
+  uint32_t Blink2_stack[MIN_STACK_SIZE + 10];
+  CreateThread(&Blink2, sizeof(Blink2_stack/Blink2_stack[0]), Blink2_stack);
+
+  uint32_t LCD_stack[MIN_STACK_SIZE + 40];
+  CreateThread(&lcd_string, sizeof(LCD_stack/LCD_stack[0]), LCD_stack);
   os_init();
   /* USER CODE END 2 */
 
@@ -205,7 +214,6 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -226,7 +234,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -273,6 +281,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
 }
 

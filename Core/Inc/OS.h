@@ -10,8 +10,9 @@
 #include "main.h"
 
 			/*Macros*/
-#define STACK_SIZE	(80u)
-#define MAX_THREADS (5u)
+#define OVERFLOW_DETECTION_SIZE (10u)
+#define MIN_STACK_SIZE			(16u + OVERFLOW_DETECTION_SIZE)
+#define MAX_THREADS 			(5u)
 
 
 
@@ -20,19 +21,19 @@
 typedef struct{
 	uint32_t *stack_pointer;
 	struct TCB *next;
-	uint32_t stack[STACK_SIZE];
 }TCB;
+
 
 
 extern TCB *current_thread_pt;
 
 
 			/*Function declarations*/
-void create_thread(void (*thread_handler)(void));
+void CreateThread(void (*thread_handler)(void), uint32_t stack_size, uint32_t *stack_ptr);
 void halt_us(volatile uint32_t time);
 void halt_ms(volatile uint32_t time);
-void blink1(void);
-void blink2(void);
+void Blink1(void);
+void Blink2(void);
 
 void os_init(void);
 void system_fault_handler(void);

@@ -24,36 +24,36 @@ void halt_ms(uint32_t time)
 }
 
 
-void create_thread(void (*thread_handler)(void))
+void CreateThread(void (*thread_handler)(void), uint32_t stack_size, uint32_t *stack_ptr)
 {
-	if(thread_ctr < MAX_THREADS)
+	if(thread_counter < MAX_THREADS)
 	{
 
-		tcb[thread_ctr].stack_pointer = &tcb[thread_ctr].stack[STACK_SIZE];
+		tcb[thread_counter].stack_pointer = stack_ptr[stack_size];
 
-		--tcb[thread_ctr].stack_pointer; *(tcb[thread_ctr].stack_pointer) |= 1<<24;						/*xPSR*/
-		*(--tcb[thread_ctr].stack_pointer) = (uint32_t) thread_handler;									/*PC*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF; 												/* LR*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R12*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R3*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R2*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R1*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;   												/*R0*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R11*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R10*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R9*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R8*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;   												/*R7*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R6*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R5*/
-		*(--tcb[thread_ctr].stack_pointer) = 0xDEADBEEF;												/*R4*/
+		--tcb[thread_counter].stack_pointer; *(tcb[thread_counter].stack_pointer) |= 1<<24;						/*xPSR*/
+		*(--tcb[thread_counter].stack_pointer) = (uint32_t) thread_handler;									/*PC*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF; 												/*LR*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R12*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R3*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R2*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R1*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;   												/*R0*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R11*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R10*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R9*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R8*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;   												/*R7*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R6*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R5*/
+		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R4*/
 
 		/* determined values for stack overflow detection */
-		for (i = 0; i < 9; ++i) {
-			tcb[thread_counter].stack[i] = 0xDEADFACE;
+		for (uint8_t i = 0; i < OVERFLOW_DETECTION_SIZE; ++i) {
+			tcb[thread_counter].stack_pointer[i] = 0xDEADFACE;
 		}
 
-		++thread_ctr;
+		++thread_counter;
 	}
 
 }
@@ -65,7 +65,7 @@ void os_init(void)
 	/*Linking the elements of the list*/
 
 	if (thread_counter >= 2) {
-		for (i = 0; i < thread_counter-1; ++i)	tcb[i].next = &tcb[i+1];
+		for (uint8_t i = 0; i < thread_counter-1; ++i)	tcb[i].next = &tcb[i+1];
 		tcb[thread_counter-1].next = &tcb[0];
 	}
 	else if(thread_counter == 1) tcb[0].next = &tcb[0];
@@ -86,7 +86,7 @@ void os_init(void)
 	__asm("add	sp,sp,#4");							//Skip LR register
 	__asm("POP	{LR}");								//Load thread address into PC
 	__asm("add	sp,sp,#4");							//Skip xPSR register
-	__asm("CPSIE	I");
+	__asm("CPSIE	I");							//Enable interrupts and exceptions again
 	__asm("bx 	lr");								//Return to 1st thread
 }
 
