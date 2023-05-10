@@ -16,10 +16,16 @@
 
 
 
+
+
 			/*Global Variables*/
 typedef struct{
 	uint32_t *stack_pointer;
 	struct TCB *next;
+	uint8_t *thread_ID;
+	uint8_t *first_function_ID;
+	uint8_t *second_function_ID;
+	uint8_t *third_function_ID;
 	uint32_t stack[STACK_SIZE];
 }TCB;
 
@@ -28,14 +34,14 @@ extern TCB *current_thread_pt;
 
 
 			/*Function declarations*/
-void create_thread(void (*thread_handler)(void));
+void Create_Thread(void (*thread_handler)(void));
 void halt_us(volatile uint32_t time);
 void halt_ms(volatile uint32_t time);
-void blink1(void);
-void blink2(void);
+void Blink1(void);
+void Blink2(void);
 
-void os_init(void);
-void system_fault_handler(void);
+void Os_Init(void);
+void System_Fault_Handler(void);
 
 
 

@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include "OS.h"
 #include "main.h"
+#include "uart_communication.h"
 
 
 int8_t thread_counter = 0;
 TCB *current_thread_pt;
 TCB tcb[MAX_THREADS] = {0};
+uint8_t uart_rx_buffer[UART_BUFFER_SIZE] = {0};
 
 
 void halt_us(uint32_t time)
@@ -24,7 +26,7 @@ void halt_ms(uint32_t time)
 }
 
 
-void create_thread(void (*thread_handler)(void))
+void Create_Thread(void (*thread_handler)(void))
 {
 	if(thread_ctr < MAX_THREADS)
 	{
@@ -58,7 +60,7 @@ void create_thread(void (*thread_handler)(void))
 
 }
 
-void os_init(void)
+void Os_Init(void)
 {
 	SysTick_Config(SystemCoreClock/1000);
 
@@ -90,7 +92,7 @@ void os_init(void)
 	__asm("bx 	lr");								//Return to 1st thread
 }
 
-void system_fault_handler(void)
+void System_Fault_Handler(void)
 {
 	__disable_irq();
 
