@@ -190,7 +190,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
 	for (uint8_t i = 10; i > 0; --i) {
-		if(current_thread_pt->stack[i] != 0xDEADFACE) system_fault_handler();
+		if(current_thread_pt->stack[i] != 0xDEADFACE) System_Fault_Handler("Stack Overflow");
 	}
 
 			/*Saving context to the stack*/

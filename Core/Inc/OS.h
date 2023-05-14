@@ -10,9 +10,10 @@
 #include "main.h"
 
 			/*Macros*/
-#define OVERFLOW_DETECTION_SIZE (10u)
+#define OVERFLOW_DETECTION_SIZE (5u)
 #define MIN_STACK_SIZE			(16u + OVERFLOW_DETECTION_SIZE)
 #define MAX_THREADS 			(5u)
+#define THREAD_NUMBER			(thread_counter-1u)
 
 
 
@@ -29,14 +30,19 @@ extern TCB *current_thread_pt;
 
 
 			/*Function declarations*/
-void CreateThread(void (*thread_handler)(void), uint32_t stack_size, uint32_t *stack_ptr);
+void CreateThread(void (*thread_handler)(void), uint32_t stack_size,
+												uint32_t *stack_ptr,
+												uint8_t *thread_id,
+												uint8_t *function1,
+												uint8_t *function2,
+												uint8_t *function3);
 void halt_us(volatile uint32_t time);
 void halt_ms(volatile uint32_t time);
 void Blink1(void);
 void Blink2(void);
 
-void os_init(void);
-void system_fault_handler(void);
+void Os_Init(void);
+void System_Fault_Handler(uint8_t *string);
 
 
 

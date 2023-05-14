@@ -4,7 +4,7 @@
 #include "main.h"
 
 
-int8_t thread_counter = 0;
+uint8_t thread_counter = 0;
 TCB *current_thread_pt;
 TCB tcb[MAX_THREADS] = {0};
 
@@ -24,14 +24,19 @@ void halt_ms(uint32_t time)
 }
 
 
-void CreateThread(void (*thread_handler)(void), uint32_t stack_size, uint32_t *stack_ptr)
+void CreateThread(void (*thread_handler)(void), uint32_t stack_size,
+												uint32_t *stack_ptr,
+												uint8_t *thread_id,
+												uint8_t *function1,
+												uint8_t *function2,
+												uint8_t *function3)
 {
 	if(thread_counter < MAX_THREADS)
 	{
 
 		tcb[thread_counter].stack_pointer = stack_ptr[stack_size];
 
-		--tcb[thread_counter].stack_pointer; *(tcb[thread_counter].stack_pointer) |= 1<<24;						/*xPSR*/
+		--tcb[thread_counter].stack_pointer; *(tcb[thread_counter].stack_pointer) |= 1<<24;					/*xPSR*/
 		*(--tcb[thread_counter].stack_pointer) = (uint32_t) thread_handler;									/*PC*/
 		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF; 												/*LR*/
 		*(--tcb[thread_counter].stack_pointer) = 0xDEADBEEF;												/*R12*/
@@ -58,9 +63,9 @@ void CreateThread(void (*thread_handler)(void), uint32_t stack_size, uint32_t *s
 
 }
 
-void os_init(void)
+void Os_Init(void)
 {
-	SysTick_Config(SystemCoreClock/1000);
+	SysTick_Config(SystemCoreClock/1000);		//Set tick time to 1 ms
 
 	/*Linking the elements of the list*/
 
@@ -69,7 +74,7 @@ void os_init(void)
 		tcb[thread_counter-1].next = &tcb[0];
 	}
 	else if(thread_counter == 1) tcb[0].next = &tcb[0];
-	else if(thread_counter == 0) /* Call fault handler function */
+	else if(thread_counter == 0) System_Fault_Handler("No Threads!");
 
 
 
@@ -90,12 +95,17 @@ void os_init(void)
 	__asm("bx 	lr");								//Return to 1st thread
 }
 
-void system_fault_handler(void)
+void System_Fault_Handler(uint8_t *string)
 {
 	__disable_irq();
 
-	GPIOA->ODR ^= 1<<5;
-	HAL_Delay(500);
+	while(true){
+		lcd_write(string);
+		Halt_ms(1000);
+		send_command_to_lcd(0b00000001);
+		Halt_ms(1);
+		GPIOA->ODR ^= 1<<5;
+	}
 
 }
 
