@@ -13,7 +13,7 @@
 #define OVERFLOW_DETECTION_SIZE (5u)
 #define MIN_STACK_SIZE			(16u + OVERFLOW_DETECTION_SIZE)
 #define MAX_THREADS 			(5u)
-#define THREAD_NUMBER			(thread_counter-1u)
+
 
 
 
