@@ -19,7 +19,8 @@
 
 
 			/*Global Variables*/
-typedef struct{
+typedef struct
+{
 	uint32_t *stack_pointer;
 	struct TCB *next;
 	uint8_t *thread_ID;

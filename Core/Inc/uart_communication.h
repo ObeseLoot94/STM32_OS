@@ -8,7 +8,7 @@
 #ifndef INC_UART_COMMUNICATION_H_
 #define INC_UART_COMMUNICATION_H_
 
-uint8_t Send_Thread_Infos(uint8_t thread_counter, TCB *tcb[MAX_THREADS], UART_HandleTypeDef *huart1);
+uint8_t Send_Thread_Infos(uint8_t thread_counter, TCB *tcb, UART_HandleTypeDef *huart1);
 
 #define UART_BUFFER_SIZE		(20u)
 
