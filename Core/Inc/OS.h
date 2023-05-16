@@ -18,10 +18,17 @@
 
 
 
+
+
 			/*Global Variables*/
-typedef struct{
+typedef struct
+{
 	uint32_t *stack_pointer;
 	struct TCB *next;
+	uint8_t *thread_ID;
+	uint8_t *first_function_ID;
+	uint8_t *second_function_ID;
+	uint8_t *third_function_ID;
 }TCB;
 
 
@@ -42,7 +49,9 @@ void Blink1(void);
 void Blink2(void);
 
 void Os_Init(void);
+
 void System_Fault_Handler(uint8_t *string);
+
 
 
 

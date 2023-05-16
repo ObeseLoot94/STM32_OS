@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include "OS.h"
 #include "main.h"
+#include "uart_communication.h"
 
 
 uint8_t thread_counter = 0;
 TCB *current_thread_pt;
 TCB tcb[MAX_THREADS] = {0};
+uint8_t uart_rx_buffer[UART_BUFFER_SIZE] = {0};
 
 
 void halt_us(uint32_t time)
@@ -22,6 +24,7 @@ void halt_ms(uint32_t time)
 		}
 	}
 }
+
 
 
 void CreateThread(void (*thread_handler)(void), uint32_t stack_size,
@@ -94,6 +97,7 @@ void Os_Init(void)
 	__asm("CPSIE	I");							//Enable interrupts and exceptions again
 	__asm("bx 	lr");								//Return to 1st thread
 }
+
 
 void System_Fault_Handler(uint8_t *string)
 {
