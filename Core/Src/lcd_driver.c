@@ -55,3 +55,14 @@ void send_command_to_lcd(uint8_t command)
 
 	halt_ms(2);
 }
+
+void lcd_string(uint8_t *string)
+{
+	while(1)
+	{
+		lcd_write(string);
+		Halt_ms(1000);
+		send_command_to_lcd(0b00000001);
+		Halt_ms(1);
+	}
+}

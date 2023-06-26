@@ -16,6 +16,7 @@ C_SRCS += \
 ../Core/Src/stm32f1xx_hal_timebase_tim.c \
 ../Core/Src/stm32f1xx_it.c \
 ../Core/Src/syscalls.c \
+../Core/Src/syscalls_own.c \
 ../Core/Src/sysmem.c \
 ../Core/Src/system_stm32f1xx.c \
 ../Core/Src/uart_communication.c 
@@ -32,6 +33,7 @@ OBJS += \
 ./Core/Src/stm32f1xx_hal_timebase_tim.o \
 ./Core/Src/stm32f1xx_it.o \
 ./Core/Src/syscalls.o \
+./Core/Src/syscalls_own.o \
 ./Core/Src/sysmem.o \
 ./Core/Src/system_stm32f1xx.o \
 ./Core/Src/uart_communication.o 
@@ -48,6 +50,7 @@ C_DEPS += \
 ./Core/Src/stm32f1xx_hal_timebase_tim.d \
 ./Core/Src/stm32f1xx_it.d \
 ./Core/Src/syscalls.d \
+./Core/Src/syscalls_own.d \
 ./Core/Src/sysmem.d \
 ./Core/Src/system_stm32f1xx.d \
 ./Core/Src/uart_communication.d 
@@ -60,7 +63,7 @@ Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/OS.d ./Core/Src/OS.o ./Core/Src/OS.su ./Core/Src/ethernet_driver.d ./Core/Src/ethernet_driver.o ./Core/Src/ethernet_driver.su ./Core/Src/ethernet_init.d ./Core/Src/ethernet_init.o ./Core/Src/ethernet_init.su ./Core/Src/lcd_driver.d ./Core/Src/lcd_driver.o ./Core/Src/lcd_driver.su ./Core/Src/led_driver.d ./Core/Src/led_driver.o ./Core/Src/led_driver.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/motor_control.d ./Core/Src/motor_control.o ./Core/Src/motor_control.su ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_hal_timebase_tim.d ./Core/Src/stm32f1xx_hal_timebase_tim.o ./Core/Src/stm32f1xx_hal_timebase_tim.su ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/uart_communication.d ./Core/Src/uart_communication.o ./Core/Src/uart_communication.su
+	-$(RM) ./Core/Src/OS.d ./Core/Src/OS.o ./Core/Src/OS.su ./Core/Src/ethernet_driver.d ./Core/Src/ethernet_driver.o ./Core/Src/ethernet_driver.su ./Core/Src/ethernet_init.d ./Core/Src/ethernet_init.o ./Core/Src/ethernet_init.su ./Core/Src/lcd_driver.d ./Core/Src/lcd_driver.o ./Core/Src/lcd_driver.su ./Core/Src/led_driver.d ./Core/Src/led_driver.o ./Core/Src/led_driver.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/motor_control.d ./Core/Src/motor_control.o ./Core/Src/motor_control.su ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_hal_timebase_tim.d ./Core/Src/stm32f1xx_hal_timebase_tim.o ./Core/Src/stm32f1xx_hal_timebase_tim.su ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/syscalls_own.d ./Core/Src/syscalls_own.o ./Core/Src/syscalls_own.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/uart_communication.d ./Core/Src/uart_communication.o ./Core/Src/uart_communication.su
 
 .PHONY: clean-Core-2f-Src
 

@@ -61,7 +61,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart);
-void lcd_string(void);
+
 
 
 
@@ -331,19 +331,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void lcd_string(uint8_t *string)
-{
 
-
-
-	while(1)
-	{
-		lcd_write(string);
-		Halt_ms(1000);
-		send_command_to_lcd(0b00000001);
-		Halt_ms(1);
-	}
-}
 
 
 

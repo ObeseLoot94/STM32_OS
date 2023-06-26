@@ -189,9 +189,11 @@ void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
-	for (uint8_t i = 10; i > 0; --i) {
-		if(current_thread_pt->stack[i] != 0xDEADFACE) System_Fault_Handler("Stack Overflow");
+	for (uint8_t i = OVERFLOW_DETECTION_SIZE; i > 0; --i) {
+		if(current_thread_pt->stack_pointer[i] != 0xDEADFACE) System_Fault_Handler("Stack Overflow");
 	}
+
+
 
 			/*Saving context to the stack*/
 	__disable_irq();
@@ -202,8 +204,10 @@ void SysTick_Handler(void)
 
 
 	/*Scheduler function goes here*/
-
-	current_thread_pt = current_thread_pt->next;
+	do{
+		current_thread_pt = current_thread_pt->next;
+	}
+	while(current_thread_pt->thread_status == SUSPENDED)
 
 	/*Loading context from the stack*/
 	__asm("LDR	R0,=current_thread_pt");

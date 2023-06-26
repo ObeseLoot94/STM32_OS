@@ -14,7 +14,15 @@
 #define MIN_STACK_SIZE			(16u + OVERFLOW_DETECTION_SIZE)
 #define MAX_THREADS 			(5u)
 
+// Thread statuses
 
+#define ACTIVE			(1U)
+#define INACTIVE		(2U)
+#define SUSPENDED		(3U)
+
+#define ATOMIC(x)		__disable_irq();\
+						x;\
+						__enable_irq();\
 
 
 
@@ -25,10 +33,12 @@ typedef struct
 {
 	uint32_t *stack_pointer;
 	struct TCB *next;
-	uint8_t *thread_ID;
-	uint8_t *first_function_ID;
-	uint8_t *second_function_ID;
-	uint8_t *third_function_ID;
+	uint8_t *thread_name;
+	uint8_t *attribute1;
+	uint8_t *attribute2;
+	uint8_t *attribute3;
+	uint8_t tid;
+	uint8_t thread_status;
 }TCB;
 
 
@@ -37,18 +47,24 @@ extern TCB *current_thread_pt;
 
 
 			/*Function declarations*/
-void CreateThread(void (*thread_handler)(void), uint32_t stack_size,
-												uint32_t *stack_ptr,
-												uint8_t *thread_id,
-												uint8_t *function1,
-												uint8_t *function2,
-												uint8_t *function3);
+void CreateThread
+(void (*thread_handler)(void),
+uint32_t stack_size,
+uint32_t *stack_ptr,
+uint8_t *thread_name,
+uint8_t *attribute1,
+uint8_t *attribute2,
+uint8_t *attribute3,
+uint8_t tid);
+
+
 void halt_us(volatile uint32_t time);
 void halt_ms(volatile uint32_t time);
 void Blink1(void);
 void Blink2(void);
 
 void Os_Init(void);
+uint8_t Send_Thread_Infos(uint8_t thread_counter, TCB *tcb, UART_HandleTypeDef *huart1);
 
 void System_Fault_Handler(uint8_t *string);
 
