@@ -1,4 +1,5 @@
 #include "lcd_driver.h"
+#include "syscalls_own.h"
 
 
 void lcd_init(void)
@@ -6,18 +7,18 @@ void lcd_init(void)
 	GPIOB->ODR &=	~(1<<RS);
 	GPIOB->ODR |= 1<<DATA4 | 1<<DATA5;
 
-	halt_ms(20);
+	HAL_Delay(20);
 	ENABLE_DATA();
 
-	halt_ms(5);
+	HAL_Delay(5);
 	ENABLE_DATA();
 
-	halt_ms(2);
+	HAL_Delay(2);
 	ENABLE_DATA();
 
 	GPIOB->ODR &= ~(1<<DATA4);
 	ENABLE_DATA();
-	halt_ms(5);
+	HAL_Delay(5);
 
 	send_command_to_lcd(0b00101000);	// N=1(2 rows), F=0 (5*8 matrix)
 	send_command_to_lcd(0b00001000);	// display off, cursor&blinking off
@@ -28,6 +29,8 @@ void lcd_init(void)
 
 void lcd_write(char *s)
 {
+	send_command_to_lcd(0b00000001);
+
 	GPIOB->ODR |= 1<<RS;
 
 	while(*s != 0){
@@ -40,6 +43,8 @@ void lcd_write(char *s)
 		ENABLE_DATA();
 		++s;
 	}
+
+	Wait(1);
 }
 
 void send_command_to_lcd(uint8_t command)
@@ -53,16 +58,7 @@ void send_command_to_lcd(uint8_t command)
 	GPIOB->ODR |= (((command<<4) & 0xF0)<<8);
 	ENABLE_DATA();
 
-	halt_ms(2);
+	HAL_Delay(2);
 }
 
-void lcd_string(uint8_t *string)
-{
-	while(1)
-	{
-		lcd_write(string);
-		Halt_ms(1000);
-		send_command_to_lcd(0b00000001);
-		Halt_ms(1);
-	}
-}
+

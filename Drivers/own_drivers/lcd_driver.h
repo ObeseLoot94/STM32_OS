@@ -5,7 +5,7 @@
 #include "OS.h"
 
 #define ENABLE_DATA()			GPIOB->ODR |= 1<<ENABLE; \
-								Halt_us(50);\
+								HAL_Delay(1);\
 								GPIOB->ODR &= ~(1<<ENABLE);
 
 #define DATA7	(15U)
@@ -18,6 +18,6 @@
 void lcd_write(char *s);
 void send_command_to_lcd(uint8_t command);
 void lcd_init(void);
-void lcd_string(uint8_t *string);
+
 
 #endif /* INC_LCD_DRIVER_H_ */

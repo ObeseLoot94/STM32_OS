@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "OS.h"
 #include "lcd_driver.h"
+#include "led_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,7 +34,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 
 
 /* USER CODE END PD */
@@ -64,13 +64,13 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart);
 
 
 
-
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint32_t blink1_stack[MIN_STACK_SIZE + 100];
+uint32_t blink2_stack[MIN_STACK_SIZE + 100];
+uint32_t string_stack[MIN_STACK_SIZE + 100];
 
 
 
@@ -110,15 +110,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   lcd_init();
   __disable_irq();
-  uint32_t Blink1_stack[MIN_STACK_SIZE + 10];
-  CreateThread(&Blink1, sizeof(Blink1_stack/Blink1_stack[0]), Blink1_stack);
 
-  uint32_t Blink2_stack[MIN_STACK_SIZE + 10];
-  CreateThread(&Blink2, sizeof(Blink2_stack/Blink2_stack[0]), Blink2_stack);
+  CreateThread(&Blink2, sizeof(blink2_stack)/sizeof(blink2_stack[0]), blink2_stack, "Blink2");
+  CreateThread(&Blink1, sizeof(blink1_stack)/sizeof(blink1_stack[0]), blink1_stack, "Blink1");
+  CreateThread(&String, sizeof(string_stack)/sizeof(string_stack[0]), string_stack, "String");
 
-  uint32_t LCD_stack[MIN_STACK_SIZE + 40];
-  CreateThread(&lcd_string, sizeof(LCD_stack/LCD_stack[0]), LCD_stack);
-  os_init();
+  Os_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -289,11 +286,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, Enable_Pin|RS_Pin|DATA4_Pin|DATA5_Pin
                           |DATA6_Pin|DATA7_Pin|ETH_CS_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : B1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Blink1_Pin_Pin Blink2_Pin_Pin */
   GPIO_InitStruct.Pin = Blink1_Pin_Pin|Blink2_Pin_Pin;
@@ -323,10 +320,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 

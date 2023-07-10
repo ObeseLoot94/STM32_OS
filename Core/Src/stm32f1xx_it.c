@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OS.h"
+#include "stdint.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+uint16_t thread_timer = 0;
+extern thread_t threads[MAX_THREADS];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -185,15 +187,9 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
-void SysTick_Handler(void)
+__attribute__ ((naked)) void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
-	for (uint8_t i = OVERFLOW_DETECTION_SIZE; i > 0; --i) {
-		if(current_thread_pt->stack_pointer[i] != 0xDEADFACE) System_Fault_Handler("Stack Overflow");
-	}
-
-
 
 			/*Saving context to the stack*/
 	__disable_irq();
@@ -202,18 +198,25 @@ void SysTick_Handler(void)
 	__asm("LDR	R1, [R0]");
 	__asm("STR	SP, [R1]");
 
+		/* Stack Overflow detection */
+	for(uint8_t i = 0; i < OVERFLOW_DETECTION_SIZE; ++i){
+		if(current_thread_pt->end_of_stack[i] != 0xDEADFACE) Kernel_Fault_Handler("Stack Overflow");
+	}
 
-	/*Scheduler function goes here*/
+		// Scheduler//
 	do{
 		current_thread_pt = current_thread_pt->next;
 	}
-	while(current_thread_pt->thread_status == SUSPENDED)
+	while(current_thread_pt->status == SUSPENDED);
 
 	/*Loading context from the stack*/
-	__asm("LDR	R0,=current_thread_pt");
+	__asm("LDR	R0, =current_thread_pt");
 	__asm("LDR	R1, [R0]");
 	__asm("LDR	SP, [R1]");
 	__asm("POP	{R4-R11}");
+
+	++thread_timer;
+
 	__enable_irq();
 	__asm("bx 	lr");
 
@@ -285,20 +288,6 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI line[15:10] interrupts.
-  */
-void EXTI15_10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(B1_Pin);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-
-  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

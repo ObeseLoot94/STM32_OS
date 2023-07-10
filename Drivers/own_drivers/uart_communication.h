@@ -10,6 +10,7 @@
 
 void Check_Thread_ID(void);
 void Uart_communication(void);
+//uint8_t Send_Thread_Infos(uint8_t thread_counter, TCB *tcb, UART_HandleTypeDef *huart1);
 
 #define UART_BUFFER_SIZE		(20u)
 
